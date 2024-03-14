@@ -15,6 +15,8 @@ func Router() *mux.Router {
 	r.HandleFunc("/createnotes", controller.CreateNotes).Methods("POST")
 	r.HandleFunc("/home",controller.GetNotesTitle).Methods(("GET"))
 	r.HandleFunc("/notes",controller.GetNote).Methods(("POST"))
+	r.HandleFunc("/deleteuser",controller.DeleteUser).Methods(("DELETE"))
+	r.HandleFunc("/deletenote",controller.DeleteNote).Methods(("DELETE"))
 	//print all the routes
 	err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()

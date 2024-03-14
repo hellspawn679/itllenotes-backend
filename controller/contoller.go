@@ -200,6 +200,97 @@ func GetNote(w http.ResponseWriter, r *http.Request){
 		if user.ID ==  uint(id) && user.Name == name {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(user)
+			return
 		}
 	}
+}
+
+func DeleteUser(w http.ResponseWriter, r *http.Request){
+	// Decode JSON data from request body
+	var data map[string]string
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
+		return
+	}
+	// read the cookie
+	value, err := helper.ReadCookie(r)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	//read the jwt token
+	_, err = helper.IsAuthorized(value["token"])
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	var user Database.User
+	email := data["email"]
+
+    if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+        w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode("invalid email try again")
+		return 
+    }
+	if !verifypassword(user.Password, string(data["password"])){
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode("incorrect password")
+		return
+	}
+	
+    // Delete the user from the database
+    if err := db.Delete(&user).Error; err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode("error occured while deleting")
+		return 
+    }
+	name := user.Name
+	var notes []Database.User_Notes
+	notes_db.Find(&notes, "name = ?", name)
+	for _, user := range notes {
+		if user.Name == name {
+			notes_db.Delete(&user)
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode("deleted")
+}
+
+func DeleteNote(w http.ResponseWriter, r *http.Request){
+	// Decode JSON data from request body
+	var data map[string]string
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
+		return
+	}
+	// read the cookie
+	value, err := helper.ReadCookie(r)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	//read the jwt token
+	claims, err := helper.IsAuthorized(value["token"])
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+	name := claims.Name
+	id,_:= strconv.Atoi( data["id"])
+	var notes []Database.User_Notes
+	notes_db.Find(&notes, "Id = ?", id)
+	for _, user := range notes {
+		if user.ID ==  uint(id) && user.Name == name {
+			notes_db.Delete(&user)
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode("deleted")
+			return 
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode("not found")
 }
