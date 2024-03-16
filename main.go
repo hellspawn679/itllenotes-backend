@@ -15,9 +15,7 @@ import (
 
 )
 
-func envar( key string) string{
-	return os.Getenv(key)
-}
+
 
 func main() {
 
@@ -35,7 +33,7 @@ func main() {
 	//Bind to a port and pass our router in
 	srv := &http.Server{
         Handler:      cors.Handler(r),
-        Addr:         "127.0.0.1:7000",
+        Addr:         "0.0.0.0:7000",
         // Good practice: enforce timeouts for servers you create!
         WriteTimeout: 15 * time.Second,
         ReadTimeout:  15 * time.Second,

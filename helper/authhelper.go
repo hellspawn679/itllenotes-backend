@@ -14,6 +14,7 @@ import (
 )
 func init(){
 	godotenv.Load()
+	
 }
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
 var REFRESH_SECRET_KEY string = os.Getenv("REFRESH_SECRET_KEY")
@@ -24,7 +25,8 @@ type signedDetail struct {
 	jwt.RegisteredClaims
 }
 func GenerateAlltoken(email string, name string, user_type string, db *gorm.DB)(signedToken string, signedRefreshToken string, err error)  {
-
+	var SECRET_KEY string = os.Getenv("SECRET_KEY")
+	var REFRESH_SECRET_KEY string = os.Getenv("REFRESH_SECRET_KEY")
 	claims := &signedDetail{
 		Email: email,
 		Name: name,

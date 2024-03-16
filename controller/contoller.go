@@ -2,7 +2,7 @@ package controller
 
 import (
 	"encoding/json"
-	//"fmt"
+	"fmt"
 	Database "github.com/nekonotes/database"
 	helper "github.com/nekonotes/helper"
 	"github.com/nekonotes/middleware"
@@ -262,12 +262,14 @@ func DeleteNote(w http.ResponseWriter, r *http.Request){
 	// Decode JSON data from request body
 	var data map[string]string
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		fmt.Println("1")
 		http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
 		return
 	}
 	// read the cookie
 	value, err := helper.ReadCookie(r)
 	if err != nil {
+		fmt.Println("2")
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(err)
 		return
@@ -285,12 +287,14 @@ func DeleteNote(w http.ResponseWriter, r *http.Request){
 	notes_db.Find(&notes, "Id = ?", id)
 	for _, user := range notes {
 		if user.ID ==  uint(id) && user.Name == name {
+			fmt.Println("4")
 			notes_db.Delete(&user)
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode("deleted")
 			return 
 		}
 	}
+	fmt.Println("5")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("not found")
 }
