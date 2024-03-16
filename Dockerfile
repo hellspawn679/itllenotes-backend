@@ -1,7 +1,8 @@
-ARG GO_VERSION=1.21.3
-FROM --platform=$BUILDPLATFORM golang:${GO_VERSION} AS build
-WORKDIR /home/nekonotes
-COPY .env .
-RUN git clone https://github.com/hellspawn679/itllenotes-backend.git
-EXPOSE 7000
 
+FROM golang:1.21
+WORKDIR /home/nekonotes
+COPY . .
+EXPOSE 7000
+RUN go mod tidy 
+RUN go build main.go
+CMD ./main

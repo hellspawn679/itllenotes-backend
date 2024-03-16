@@ -3,7 +3,7 @@ services:
   server:
     build:
       context: .
-
+      target: final
     ports:
       - 7000:7000
     depends_on:

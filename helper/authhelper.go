@@ -54,8 +54,9 @@ func GenerateAlltoken(email string, name string, user_type string, db *gorm.DB)(
 }
 
 func IsAuthorized(tokenString string) (*signedDetail, error) {
-	claims := &signedDetail{}
+	var SECRET_KEY string = os.Getenv("SECRET_KEY")
 
+	claims := &signedDetail{}
 	// Parse the token
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		// Check the signing method
