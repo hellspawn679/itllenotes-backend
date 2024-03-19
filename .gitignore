@@ -1,2 +1,4 @@
 .env
-/db
+/db/password.txt
+/db/postgres-secrets.yaml
+

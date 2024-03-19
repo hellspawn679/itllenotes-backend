@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-backend-deployment
+  labels:
+    app: go-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-backend
+  template:
+    metadata:
+      labels:
+        app: go-backend
+    spec:
+      containers:
+      - name: go-backend
+        image: max45/go-backend:1.0
+        ports:
+        - containerPort: 7000
+        env:
+        - name: DB_HOST
+          value: postgres-service.default.svc.cluster.local
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-root-username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-root-password
+        - name: DB_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-root-username
+        - name: DB_PORT
+          value: "5432"
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: jwt-secret-key
+        - name: REFRESH_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: jwt-refresh-secret-key
+        - name: HASH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: hash-key
+        - name: BLOCK_KEY
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: block-key
+        - name: KEY64
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: key-64
+        - name: KEY32
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: key-32
+            
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-backend-service
+spec:
+  type: LoadBalancer
+  selector:
+     app: go-backend
+  ports:
+  - protocol: TCP
+    port: 7000
+    targetPort: 7000

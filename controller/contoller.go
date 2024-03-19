@@ -12,7 +12,6 @@ import (
 )
 
 var db, notes_db = Database.ConnecttoDB()
-
 func Homepage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "applicatioan/json")
 	json.NewEncoder(w).Encode("hello world")
@@ -25,7 +24,6 @@ func verifypassword(providedPassword string, userPassword string) bool {
 	}
 	return check
 }
-
 func Register(w http.ResponseWriter, r *http.Request) {
 	// Check if the request method is OPTIONS (preflight request)
 	if r.Method == "OPTIONS" {
@@ -71,7 +69,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("created")
 }
-
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "OPTIONS" {
 		// Respond with a success status for preflight requests
@@ -109,7 +106,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("invalid user name try again")
 }
-
 func CreateNotes(w http.ResponseWriter, r *http.Request) {
 	// Decode JSON data from request body
 	var data map[string]string
@@ -139,7 +135,6 @@ func CreateNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("created")
 }
-
 func GetNotesTitle(w http.ResponseWriter, r *http.Request) {
 	
 	// read the cookie
@@ -170,7 +165,6 @@ func GetNotesTitle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
-
 func GetNote(w http.ResponseWriter, r *http.Request){
 	// Decode JSON data from request body
 	var data map[string]string
@@ -204,7 +198,6 @@ func GetNote(w http.ResponseWriter, r *http.Request){
 		}
 	}
 }
-
 func DeleteUser(w http.ResponseWriter, r *http.Request){
 	// Decode JSON data from request body
 	var data map[string]string
@@ -257,7 +250,6 @@ func DeleteUser(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode("deleted")
 }
-
 func DeleteNote(w http.ResponseWriter, r *http.Request){
 	// Decode JSON data from request body
 	var data map[string]string
